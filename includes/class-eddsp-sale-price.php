@@ -162,7 +162,9 @@ class EDDSP_Sale_Price {
 		endif;
 
 		if ( isset( $sale_price ) && ! empty( $sale_price ) ) :
-			$formatted_price = '<del>' . edd_currency_filter( edd_format_amount( $regular_price ) ) . '</del>&nbsp;' . edd_currency_filter( edd_format_amount( $sale_price ) );
+			$formatted_regular_price = '<span class="edd_price" id="edd_price_' . $download_id . '"><del>' . edd_currency_filter( edd_format_amount( $regular_price ) ) . '</del>&nbsp;</span>';
+			$formatted_sale_price = '<span class="edd_price" id="edd_sale_price_' . $download_id . '">' . edd_currency_filter( edd_format_amount( $sale_price ) ) . '</span>';
+
 		endif;
 
 		return $formatted_price;
@@ -351,7 +353,7 @@ class EDDSP_Sale_Price {
 											?></del></span>&nbsp;<?php
 										endif;
 
-										?><span class="edd_price_option_price" itemprop="price"><?php echo edd_currency_filter( edd_format_amount( $price['amount'] ) ); ?></span>
+										?><span class="edd_price_option_price sale_price" itemprop="price"><?php echo edd_currency_filter( edd_format_amount( $price['amount'] ) ); ?></span>
 									</span>
 							</label><?php
 								do_action( 'edd_after_price_option', $key, $price, $download_id );
