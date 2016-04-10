@@ -9,7 +9,7 @@
  * Text Domain: 	edd-sale-price
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if(!defined( 'ABSPATH' )) exit; // Exit if accessed directly
 
 /**
  * Class EDD_Sale_Price.
@@ -59,12 +59,9 @@ class EDD_Sale_Price {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-
 		// Initialize plugin parts
 		$this->init();
-
 	}
-
 
 	/**
 	 * Instance.
@@ -76,15 +73,12 @@ class EDD_Sale_Price {
 	 * @return object Instance of the class.
 	 */
 	public static function instance() {
-
-		if ( is_null( self::$instance ) ) :
+		if(is_null( self::$instance )) :
 			self::$instance = new self();
 		endif;
 
 		return self::$instance;
-
 	}
-
 
 	/**
 	 * Init.
@@ -94,7 +88,6 @@ class EDD_Sale_Price {
 	 * @since 1.0.0
 	 */
 	public function init() {
-
 		// Load textdomain
 		$this->load_textdomain();
 
@@ -104,7 +97,7 @@ class EDD_Sale_Price {
 		require_once plugin_dir_path( __FILE__ ) . '/includes/class-eddsp-sale-price.php';
 		$this->price = new EDDSP_Sale_Price();
 
-		if ( is_admin() ) :
+		if(is_admin()) :
 
 			/**
 			 * Admin product class
@@ -113,9 +106,7 @@ class EDD_Sale_Price {
 			$this->admin_product = new EDDSP_Admin_Product();
 
 		endif;
-
 	}
-
 
 	/**
 	 * Textdomain.
@@ -125,12 +116,9 @@ class EDD_Sale_Price {
 	 * @since 1.0.0
 	 */
 	public function load_textdomain() {
-
 		// Load textdomain
 		load_plugin_textdomain( 'edd-sale-price', false, basename( dirname( __FILE__ ) ) . '/languages' );
-
 	}
-
 
 }
 
@@ -146,9 +134,9 @@ class EDD_Sale_Price {
  *
  * @return object EDD_Sale_Price class object.
  */
-if ( ! function_exists( 'EDD_Sale_Price' ) ) :
+if(! function_exists( 'EDD_Sale_Price' )) :
 
- 	function EDD_Sale_Price() {
+	function EDD_Sale_Price() {
 		return EDD_Sale_Price::instance();
 	}
 
