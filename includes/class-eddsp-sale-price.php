@@ -19,7 +19,6 @@ class EDDSP_Sale_Price {
 	 * @since 1.0.0
 	 */
 	public function __construct() {
-
 		// Modify simple price
 		add_filter( 'edd_get_download_price', array( $this, 'maybe_display_sale_price' ), 10, 2 );
 
@@ -37,9 +36,7 @@ class EDDSP_Sale_Price {
 		// Variable price
 		remove_action( 'edd_purchase_link_top', 'edd_purchase_variable_pricing' );
 		add_action( 'edd_purchase_link_top', array( $this, 'edd_purchase_variable_pricing' ), 10, 2 );
-
 	}
-
 
 	/**
 	 * Sale price.
@@ -49,12 +46,11 @@ class EDDSP_Sale_Price {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param	double 	$price 			Regular price of the product.
-	 * @param	int		$download_id	ID of the download we're changing the price for.
-	 * @return	double					The new price, if the product is in sale this will be the sale price.
+	 * @param  double $price       Regular price of the product.
+	 * @param  int    $download_id ID of the download we're changing the price for.
+	 * @return double              The new price, if the product is in sale this will be the sale price.
 	 */
 	public function maybe_display_sale_price( $price, $download_id ) {
-
 		// Bail if its admin - we don't want to change the regular price
 		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) :
 			return $price;
@@ -67,9 +63,7 @@ class EDDSP_Sale_Price {
 		endif;
 
 		return $price;
-
 	}
-
 
 	/**
 	 * Sale price.
@@ -79,12 +73,11 @@ class EDDSP_Sale_Price {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param	array 	$prices 		Array of regular prices for a single product.
-	 * @param	int		$download_id	ID of the download we're changing the price for.
-	 * @return	double					Array of new prices, if the variant is in sale this will be the sale price.
+	 * @param  array  $prices      Array of regular prices for a single product.
+	 * @param  int    $download_id ID of the download we're changing the price for.
+	 * @return double              Array of new prices, if the variant is in sale this will be the sale price.
 	 */
 	public function maybe_display_variable_sale_prices( $prices, $download_id ) {
-
 		// Bail if its admin - we don't want to change the regular price
 		if ( is_admin() && ! defined( 'DOING_AJAX' ) ) :
 			return $prices;
@@ -93,16 +86,14 @@ class EDDSP_Sale_Price {
 		foreach ( $prices as $key => $price ) :
 
 			if ( isset( $price['sale_price'] ) && ! empty( $price['sale_price'] ) ) :
-				$prices[ $key ]['regular_amount'] 	= $price['amount'];
-				$prices[ $key ]['amount'] 			= $price['sale_price'];
+				$prices[ $key ]['regular_amount'] = $price['amount'];
+				$prices[ $key ]['amount']         = $price['sale_price'];
 			endif;
 
 		endforeach;
 
 		return $prices;
-
 	}
-
 
 	/**
 	 * Sale price for edd_price().
@@ -111,21 +102,20 @@ class EDDSP_Sale_Price {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param	string	$formatted_price 	Formatted price label, includes span wrapper.
-	 * @param	int		$download_id		ID of the download.
-	 * @param	string	$price				Formatted price label.
-	 * @param	int		$price_id			If its a variable priced product, the price ID.
-	 * @return	string						Formatted price label with sale price.
+	 * @param  string $formatted_price Formatted price label, includes span wrapper.
+	 * @param  int    $download_id     ID of the download.
+	 * @param  string $price           Formatted price label.
+	 * @param  int    $price_id        If its a variable priced product, the price ID.
+	 * @return string                  Formatted price label with sale price.
 	 */
 	public function edd_price_maybe_display_sale_price( $formatted_price, $download_id, $price, $price_id ) {
-
 		if ( edd_has_variable_prices( $download_id ) ) :
 
 			$prices = edd_get_variable_prices( $download_id );
 
 			if ( false !== $price_id && isset( $prices[ $price_id ] ) ) {
-				$regular_price 	= (float) $prices[ $price_id ]['regular_amount'];
-				$sale_price 	= (float) $prices[ $price_id ]['sale_price'];
+				$regular_price = (float) $prices[ $price_id ]['regular_amount'];
+				$sale_price    = (float) $prices[ $price_id ]['sale_price'];
 			} else {
 
 				// Get lowest price id
@@ -149,15 +139,13 @@ class EDDSP_Sale_Price {
 				$lowest_id = $min_id;
 
 				// Set prices
-				$regular_price 	= isset( $prices[ $lowest_id ]['regular_amount'] ) ? $prices[ $lowest_id ]['regular_amount'] : $prices[ $lowest_id ]['amount'];
-				$sale_price 	= isset( $prices[ $lowest_id ]['sale_price'] ) ? $prices[ $lowest_id ]['sale_price'] : null;
+				$regular_price = isset( $prices[ $lowest_id ]['regular_amount'] ) ? $prices[ $lowest_id ]['regular_amount'] : $prices[ $lowest_id ]['amount'];
+				$sale_price    = isset( $prices[ $lowest_id ]['sale_price'] ) ? $prices[ $lowest_id ]['sale_price'] : null;
 
-			}
+			} else :
 
-		else :
-
-			$regular_price 	= get_post_meta( $download_id, 'edd_price', true );
-			$sale_price 	= get_post_meta( $download_id, 'edd_sale_price', true );
+			$regular_price = get_post_meta( $download_id, 'edd_price', true );
+			$sale_price    = get_post_meta( $download_id, 'edd_sale_price', true );
 
 		endif;
 
@@ -166,9 +154,7 @@ class EDDSP_Sale_Price {
 		endif;
 
 		return $formatted_price;
-
 	}
-
 
 	/**
 	 * Purchase button sale price.
@@ -179,22 +165,21 @@ class EDDSP_Sale_Price {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param	array	$args	List of arguments for the payment button.
-	 * @return	array			List of arguments for the payment button.
+	 * @param  array $args List of arguments for the payment button.
+	 * @return array       List of arguments for the payment button.
 	 */
 	public function maybe_display_sale_price_text( $args ) {
-
 		if ( ! apply_filters( 'eddsp_display_regular_price_text_buy_button', false ) ) :
 			return $args;
 		endif;
 
-		$add_to_cart_text 	= edd_get_option( 'add_to_cart_text' );
-		$default_args 		= apply_filters( 'edd_purchase_link_defaults', array(
+		$add_to_cart_text = edd_get_option( 'add_to_cart_text' );
+		$default_args     = apply_filters( 'edd_purchase_link_defaults', array(
 			'text' => ! empty( $add_to_cart_text ) ? $add_to_cart_text : __( 'Purchase', 'edd' ),
 		) );
 
-		$download 			= new EDD_Download( $args['download_id'] );
-		$variable_pricing	= $download->has_variable_prices();
+		$download         = new EDD_Download( $args['download_id'] );
+		$variable_pricing = $download->has_variable_prices();
 
 		// Bail if its a variable priced button
 		if ( $variable_pricing ) :
@@ -202,8 +187,8 @@ class EDDSP_Sale_Price {
 		endif;
 
 		if ( $args['price'] && $args['price'] !== 'no' ) {
-			$regular_price 	= get_post_meta( $args['download_id'], 'edd_price', true );
-			$sale_price 	= get_post_meta( $args['download_id'], 'edd_sale_price', true );
+			$regular_price = get_post_meta( $args['download_id'], 'edd_price', true );
+			$sale_price    = get_post_meta( $args['download_id'], 'edd_sale_price', true );
 		}
 
 		if ( ! isset( $sale_price ) || empty( $sale_price ) ) :
@@ -221,9 +206,7 @@ class EDDSP_Sale_Price {
 		}
 
 		return $args;
-
 	}
-
 
 	/**
 	 * Checkout sale price.
@@ -233,25 +216,24 @@ class EDDSP_Sale_Price {
 	 *
 	 * @since 1.0.0, EDD 2.4.0
 	 *
-	 * @param	double 	$price 			Regular price of the product.
-	 * @param	int		$download_id	ID of the download we're changing the price for.
-	 * @return	double					The new price, if the product is in sale this will be the sale price.
+	 * @param  double $price       Regular price of the product.
+	 * @param  int    $download_id ID of the download we're changing the price for.
+	 * @return double              The new price, if the product is in sale this will be the sale price.
 	 */
 	public function checkout_maybe_display_sale_price( $label, $item_id, $options ) {
-
 		global $edd_options;
 
-		$download		= new EDD_Download( $item_id );
-		$regular_price 	= get_post_meta( $item_id, 'edd_price', true );
-		$price 			= edd_get_cart_item_price( $item_id, $options );
+		$download      = new EDD_Download( $item_id );
+		$regular_price = get_post_meta( $item_id, 'edd_price', true );
+		$price         = edd_get_cart_item_price( $item_id, $options );
 
 		// Get sale price if it exists
 		if ( $download->has_variable_prices() ) :
-			$prices = $download->get_prices();
-			$regular_price 	= isset( $prices[ $options['price_id'] ]['regular_amount'] ) ? $prices[ $options['price_id'] ]['regular_amount'] : $regular_price;
-			$sale_price 	= $prices[ $options['price_id'] ]['sale_price'];
+			$prices        = $download->get_prices();
+			$regular_price = isset( $prices[ $options['price_id'] ]['regular_amount'] ) ? $prices[ $options['price_id'] ]['regular_amount'] : $regular_price;
+			$sale_price    = $prices[ $options['price_id'] ]['sale_price'];
 		else :
-			$sale_price	= get_post_meta( $item_id, 'edd_sale_price', true );
+			$sale_price = get_post_meta( $item_id, 'edd_sale_price', true );
 		endif;
 
 		// Bail if no sale price is set
@@ -259,20 +241,20 @@ class EDDSP_Sale_Price {
 			return $label;
 		endif;
 
-		$label 		= '';
-		$price_id 	= isset( $options['price_id'] ) ? $options['price_id'] : false;
+		$label    = '';
+		$price_id = isset( $options['price_id'] ) ? $options['price_id'] : false;
 
 		if ( ! edd_is_free_download( $item_id, $price_id ) && ! edd_download_is_tax_exclusive( $item_id ) ) {
 
 			if ( edd_prices_show_tax_on_checkout() && ! edd_prices_include_tax() ) {
 
-				$regular_price 	+= edd_get_cart_item_tax( $item_id, $options, $regular_price );
-				$price 			+= edd_get_cart_item_tax( $item_id, $options, $price );
+				$regular_price += edd_get_cart_item_tax( $item_id, $options, $regular_price );
+				$price         += edd_get_cart_item_tax( $item_id, $options, $price );
 
 			} if ( ! edd_prices_show_tax_on_checkout() && edd_prices_include_tax() ) {
 
-				$regular_price 	-= edd_get_cart_item_tax( $item_id, $options, $regular_price );
-				$price 			-= edd_get_cart_item_tax( $item_id, $options, $price );
+				$regular_price -= edd_get_cart_item_tax( $item_id, $options, $regular_price );
+				$price         -= edd_get_cart_item_tax( $item_id, $options, $price );
 
 			}
 
@@ -291,13 +273,11 @@ class EDDSP_Sale_Price {
 			}
 		}
 
-		$regular_price 	= '<del>' . edd_currency_filter( edd_format_amount( $regular_price ) ) . '</del>';
-		$price 			= edd_currency_filter( edd_format_amount( $price ) );
+		$regular_price = '<del>' . edd_currency_filter( edd_format_amount( $regular_price ) ) . '</del>';
+		$price         = edd_currency_filter( edd_format_amount( $price ) );
 
 		return $regular_price . ' ' . $price . $label;
-
 	}
-
 
 	/**
 	 * Display variable price.
@@ -307,17 +287,16 @@ class EDDSP_Sale_Price {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param	int		$download_id	ID of the download to get the labels for.
-	 * @param	array	$args			Array of arguments related to the download price.
+	 * @param int   $download_id ID of the download to get the labels for.
+	 * @param array $args        Array of arguments related to the download price.
 	 */
 	public function edd_purchase_variable_pricing( $download_id = 0, $args = array() ) {
-
 		global $edd_options;
 
 		$variable_pricing = edd_has_variable_prices( $download_id );
-		$prices = apply_filters( 'edd_purchase_variable_prices', edd_get_variable_prices( $download_id ), $download_id );
+		$prices           = apply_filters( 'edd_purchase_variable_prices', edd_get_variable_prices( $download_id ), $download_id );
 
-		if ( ! $variable_pricing || ( false !== $args['price_id'] && isset( $prices[$args['price_id']] ) ) ) {
+		if ( ! $variable_pricing || ( false !== $args['price_id'] && isset( $prices[ $args['price_id'] ] ) ) ) {
 			return;
 		}
 
@@ -365,8 +344,6 @@ class EDDSP_Sale_Price {
 		</div><!--end .edd_price_options-->
 		<?php
 		do_action( 'edd_after_price_options', $download_id );
-
 	}
-
 
 }
